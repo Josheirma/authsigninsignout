@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import AuthUI from "./components/AuthUI";
+import { useUser, UserProvider } from "./contexts/UserContext";
+import { logout } from "./utils/auth";
 
-function App() {
+function Dashboard() {
+  const { user } = useUser();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Welcome, {user.email}</h1>
+      <button onClick={logout} className="bg-gray-500 text-white p-2 mt-4 rounded">
+        Logout
+      </button>
     </div>
   );
 }
 
-export default App;
+function App() {
+  const { user, loading } = useUser();
+
+  if (loading) return <p>Loading...</p>;
+
+  return user ? <Dashboard /> : <AuthUI />;
+}
+
+export default function RootApp() {
+  return (
+    <UserProvider>
+      <App />
+    </UserProvider>
+  );
+}
+
